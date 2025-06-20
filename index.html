@@ -1,96 +1,119 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расчёт темпа бега</title>
+    <title>Калькулятор темпа, дистанции и времени</title>
     <style>
+
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #fafafa;
-            color: #333;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .container {
-            width: 300px;
+            font-family: Arial, sans-serif;
             text-align: center;
+            margin-top: 50px;
         }
-        input[type="text"] {
-            width: calc(20% - 5px); /* Деление пополам */
-            margin-right: 10px;
+        input {
+            width: 80px;
             padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box; /* Добавляем это свойство */
+            margin: 10px;
         }
-        input[type="text"].last-input {
-            margin-right: 0; /* Удаление отступа справа последнего элемента */
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
-        label {
-            display: inline-block; /* Меняем на inline-block */
-            margin-bottom: 5px;
-            font-weight: bold;
-            text-align: center; /* Выравниваем слева сами подписи */
-            width: 100%; /* Полная ширина строки */
+        button:hover {
+            background-color: #0056B3;
         }
-        p {
+        result-output {
+            font-size: 1.5em;
             margin-top: 20px;
-            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <label>Дистанция:</label><br/>
-    <input type="text" id="km" placeholder="КМ" pattern="\d+" />км
-    <input type="text" id="meters" placeholder="М" class="last-input" pattern="\d+" /> м<br/><br/>
+<h1>Калькулятор темпа, дистанции и времени</h1>
 
-    <label>Время:</label><br/>
-    <input type="text" id="hours" placeholder="Ч" pattern="\d+" />:
-    <input type="text" id="minutes" placeholder="М" pattern="\d+" />:
-    <input type="text" id="seconds" placeholder="С" style="margin-left: 10px;" pattern="\d+" /><br/><br/>
+<form onsubmit="return false;">
+    <label>Дистанция:</label><br />
+    <input type="number" id="distance-km" placeholder="Километры" min="0" step="any" />
+    <input type="number" id="distance-meters" placeholder="Метры" min="0" step="any" /><br /><br />
 
-    <label>Темп (мин/км):</label><br/>
-    <output id="pace">-- мин/км</output><br/><br/>
+    <label>Время:</label><br />
+    <input type="number" id="time-hours" placeholder="Часы" min="0" step="any" />
+    <input type="number" id="time-minutes" placeholder="Минуты" min="0" max="59" step="any" />
+    <input type="number" id="time-seconds" placeholder="Секунды" min="0" max="59" step="any" /><br /><br />
 
-    <button onclick="calculatePace()">Рассчитать темп</button>
-</div>
+    <label>Темп:</label><br />
+    <input type="number" id="pace-minutes" placeholder="Минуты" min="0" step="any" />
+    <input type="number" id="pace-seconds" placeholder="Секунды" min="0" max="59" step="any" /><br /><br />
+
+    <button onclick="calculateMissingField();">Вычислить</button>
+</form>
+<p id="result-output"></p>
 
 <script>
-    function calculatePace() {
-        // Сбор введённых значений
-        let km = parseFloat(document.getElementById('km').value) || 0;
-        let meters = parseFloat(document.getElementById('meters').value) || 0;
-        let hours = parseFloat(document.getElementById('hours').value) || 0;
-        let minutes = parseFloat(document.getElementById('minutes').value) || 0;
-        let seconds = parseFloat(document.getElementById('seconds').value) || 0;
-
-        // Преобразование общего расстояния в километры
-        let totalDistanceKm = km + (meters / 1000); // Метры переводим в километры
-
-        // Общая продолжительность в минутах
-        let totalTimeSeconds = (hours * 3600) + (minutes * 60) + seconds; // Всё приводим к секундам
-        let totalTimeMinutes = totalTimeSeconds / 60; // Переводим обратно в минуты
-
-        // Проверка правильности ввода
-        if (totalDistanceKm === 0 || totalTimeMinutes === 0) {
-            alert("Необходимо ввести хотя бы одну единицу измерения расстояния и времени.");
-            return;
-        }
-
-        // Формула расчёта темпа (время на один километр)
-        let paceInSecondsPerKilometer = totalTimeSeconds / totalDistanceKm;
-        let paceMinutes = Math.floor(paceInSecondsPerKilometer / 60); // Минуты
-        let paceSeconds = Math.round(paceInSecondsPerKilometer % 60); // Остаточные секунды
-
-        // Вывод результата в виде "минуты:секунды"
-        document.getElementById('pace').innerText = `${paceMinutes}:${paceSeconds.toString().padStart(2, '0')} мин/км`;
-    }
+// Логика вычислений сохранена в следующей части
 </script>
 
+
+
+<script> 
+function calculateMissingField() {
+    const distanceKM = parseFloat(document.getElementById('distance-km').value) || 0;
+    const distanceMeters = parseFloat(document.getElementById('distance-meters').value) || 0;
+    const timeHours = parseFloat(document.getElementById('time-hours').value) || 0;
+    const timeMinutes = parseFloat(document.getElementById('time-minutes').value) || 0;
+    const timeSeconds = parseFloat(document.getElementById('time-seconds').value) || 0;
+    const paceMinutes = parseFloat(document.getElementById('pace-minutes').value) || 0;
+    const paceSeconds = parseFloat(document.getElementById('pace-seconds').value) || 0;
+
+    const resultOutput = document.getElementById('result-output');
+
+    // Подсчет общего расстояния в метрах
+    const totalDistanceMeters = distanceKM * 1000 + distanceMeters;
+
+    // Подсчет общего времени в секундах
+    const totalTimeSeconds = timeHours * 3600 + timeMinutes * 60 + timeSeconds;
+
+    // Количество незаполненных полей
+    let emptyFieldsCount = 0;
+    if (!totalDistanceMeters) emptyFieldsCount++;
+    if (!totalTimeSeconds) emptyFieldsCount++;
+    if (!(paceMinutes || paceSeconds)) emptyFieldsCount++;
+
+    if (emptyFieldsCount !== 1) {
+        resultOutput.innerText = "Нужно заполнить ровно два поля!";
+        return;
+    }
+
+    // Приведение темпа к общему виду (секунд на километр)
+    const totalPaceSeconds = paceMinutes * 60 + paceSeconds;
+
+    // Основная логика расчета
+    if (!totalDistanceMeters) {
+        // Вычисляем дистанцию
+        const calculatedDistanceMeters = (totalTimeSeconds / totalPaceSeconds) * 1000;
+        const kilometers = Math.floor(calculatedDistanceMeters / 1000);
+        const meters = calculatedDistanceMeters % 1000;
+        resultOutput.innerText = `Дистанция: ${kilometers} км ${meters.toFixed(0)} м`;
+    } else if (!totalTimeSeconds) {
+        // Вычисляем время
+        const totalTimeInSeconds = totalDistanceMeters / 1000 * totalPaceSeconds;
+        const hours = Math.floor(totalTimeInSeconds / 3600);
+        const minutes = Math.floor((totalTimeInSeconds % 3600) / 60);
+        const seconds = totalTimeInSeconds % 60;
+        resultOutput.innerText = `Время: ${hours}:${minutes}:${seconds.toFixed(0)}`;
+    } else if (!totalPaceSeconds) {
+        // Вычисляем темп
+        const totalPaceInSeconds = totalTimeSeconds / (totalDistanceMeters / 1000);
+        const paceMinutesFinal = Math.floor(totalPaceInSeconds / 60);
+        const paceSecondsFinal = totalPaceInSeconds % 60;
+        resultOutput.innerText = `Темп: ${paceMinutesFinal}:${paceSecondsFinal.toFixed(0)} мин/км`;
+    }
+}
+</script>
 <!-- Библиотека Telegram Web App SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@telegram-widgets/web-app-sdk/dist/telegram-web-app.min.js"></script>
 </body>
