@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расчёт темпа бега</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fafafa;
+            color: #333;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .container {
+            width: 300px;
+            text-align: center;
+        }
+        input[type="text"] {
+            width: calc(20% - 5px); /* Деление пополам */
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Добавляем это свойство */
+        }
+        input[type="text"].last-input {
+            margin-right: 0; /* Удаление отступа справа последнего элемента */
+        }
+        label {
+            display: inline-block; /* Меняем на inline-block */
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: center; /* Выравниваем слева сами подписи */
+            width: 100%; /* Полная ширина строки */
+        }
+        p {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <label>Дистанция:</label><br/>
+    <input type="text" id="km" placeholder="КМ" pattern="\d+" />км
+    <input type="text" id="meters" placeholder="М" class="last-input" pattern="\d+" /> м<br/><br/>
+
+    <label>Время:</label><br/>
+    <input type="text" id="hours" placeholder="Ч" pattern="\d+" />:
+    <input type="text" id="minutes" placeholder="М" pattern="\d+" />:
+    <input type="text" id="seconds" placeholder="С" style="margin-left: 10px;" pattern="\d+" /><br/><br/>
+
+    <label>Темп (мин/км):</label><br/>
+    <output id="pace">-- мин/км</output><br/><br/>
+
+    <button onclick="calculatePace()">Рассчитать темп</button>
+</div>
+
+<script>
+    function calculatePace() {
+        // Сбор введённых значений
+        let km = parseFloat(document.getElementById('km').value) || 0;
+        let meters = parseFloat(document.getElementById('meters').value) || 0;
+        let hours = parseFloat(document.getElementById('hours').value) || 0;
+        let minutes = parseFloat(document.getElementById('minutes').value) || 0;
+        let seconds = parseFloat(document.getElementById('seconds').value) || 0;
+
+        // Преобразование общего расстояния в километры
+        let totalDistanceKm = km + (meters / 1000); // Метры переводим в километры
+
+        // Общая продолжительность в минутах
+        let totalTimeSeconds = (hours * 3600) + (minutes * 60) + seconds; // Всё приводим к секундам
+        let totalTimeMinutes = totalTimeSeconds / 60; // Переводим обратно в минуты
+
+        // Проверка правильности ввода
+        if (totalDistanceKm === 0 || totalTimeMinutes === 0) {
+            alert("Необходимо ввести хотя бы одну единицу измерения расстояния и времени.");
+            return;
+        }
+
+        // Формула расчёта темпа (время на один километр)
+        let paceInSecondsPerKilometer = totalTimeSeconds / totalDistanceKm;
+        let paceMinutes = Math.floor(paceInSecondsPerKilometer / 60); // Минуты
+        let paceSeconds = Math.round(paceInSecondsPerKilometer % 60); // Остаточные секунды
+
+        // Вывод результата в виде "минуты:секунды"
+        document.getElementById('pace').innerText = `${paceMinutes}:${paceSeconds.toString().padStart(2, '0')} мин/км`;
+    }
+</script>
+
+<!-- Библиотека Telegram Web App SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@telegram-widgets/web-app-sdk/dist/telegram-web-app.min.js"></script>
+</body>
+</html>
