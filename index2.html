@@ -9,6 +9,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #c2c2c3;
             margin-top: 50px;
         }
         input {
@@ -82,7 +83,6 @@ function calculateMissingField() {
     if (!totalDistanceMeters) emptyFieldsCount++;
     if (!totalTimeSeconds) emptyFieldsCount++;
     if (!(paceMinutes || paceSeconds)) emptyFieldsCount++;
-
     if (emptyFieldsCount !== 1) {
         resultOutput.innerText = "Нужно заполнить ровно два поля!";
         return;
