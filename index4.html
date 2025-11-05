@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор темпа, дистанции и времени</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #c5c5c9;
+            margin-top: 50px;
+        }
+        input {
+            width: 80px;
+            padding: 10px;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #7489a0;
+        }
+        result-output {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>Калькулятор темпа, дистанции и времени</h1>
+
+<form onsubmit="return false;">
+    <label>Дистанция:</label><br />
+    <input type="number" id="distance-km" placeholder="Километры" min="0" step="any" />
+    <input type="number" id="distance-meters" placeholder="Метры" min="0" step="any" /><br /><br />
+
+    <label>Время:</label><br />
+    <input type="number" id="time-hours" placeholder="Часы" min="0" step="any" />
+    <input type="number" id="time-minutes" placeholder="Минуты" min="0" max="59" step="any" />
+    <input type="number" id="time-seconds" placeholder="Секунды" min="0" max="59" step="any" /><br /><br />
+
+    <label>Темп:</label><br />
+    <input type="number" id="pace-minutes" placeholder="Минуты" min="0" step="any" />
+    <input type="number" id="pace-seconds" placeholder="Секунды" min="0" max="59" step="any" /><br /><br />
+
+    <button onclick="calculateMissingField();">Вычислить</button>
+</form>
+<p id="result-output"></p>
+
+<script>
+// Логика вычислений сохранена в следующей части
+</script>
+
+
+
+<script> 
+function calculateMissingField() {
+    const distanceKM = parseFloat(document.getElementById('distance-km').value) || 0;
+    const distanceMeters = parseFloat(document.getElementById('distance-meters').value) || 0;
+    const timeHours = parseFloat(document.getElementById('time-hours').value) || 0;
+    const timeMinutes = parseFloat(document.getElementById('time-minutes').value) || 0;
+    const timeSeconds = parseFloat(document.getElementById('time-seconds').value) || 0;
+    const paceMinutes = parseFloat(document.getElementById('pace-minutes').value) || 0;
+    const paceSeconds = parseFloat(document.getElementById('pace-seconds').value) || 0;
+
+    const resultOutput = document.getElementById('result-output');
+
+    // Подсчет общего расстояния в метрах
+    const totalDistanceMeters = distanceKM * 1000 + distanceMeters;
+
+    // Подсчет общего времени в секундах
+    const totalTimeSeconds = timeHours * 3600 + timeMinutes * 60 + timeSeconds;
+
+    // Количество незаполненных полей
+    let emptyFieldsCount = 0;
+    if (!totalDistanceMeters) emptyFieldsCount++;
+    if (!totalTimeSeconds) emptyFieldsCount++;
+    if (!(paceMinutes || paceSeconds)) emptyFieldsCount++;
+    if (emptyFieldsCount !== 1) {
+        resultOutput.innerText = "Нужно заполнить ровно два поля!";
+        return;
+    }
+
+    // Приведение темпа к общему виду (секунд на километр)
+    const totalPaceSeconds = paceMinutes * 60 + paceSeconds;
+
+    // Основная логика расчета
+    if (!totalDistanceMeters) {
+        // Вычисляем дистанцию
+        const calculatedDistanceMeters = (totalTimeSeconds / totalPaceSeconds) * 1000;
+        const kilometers = Math.floor(calculatedDistanceMeters / 1000);
+        const meters = calculatedDistanceMeters % 1000;
+        resultOutput.innerText = `Дистанция: ${kilometers} км ${meters.toFixed(0)} м`;
+    } else if (!totalTimeSeconds) {
+        // Вычисляем время
+        const totalTimeInSeconds = totalDistanceMeters / 1000 * totalPaceSeconds;
+        const hours = Math.floor(totalTimeInSeconds / 3600);
+        const minutes = Math.floor((totalTimeInSeconds % 3600) / 60);
+        const seconds = totalTimeInSeconds % 60;
+        resultOutput.innerText = `Время: ${hours}:${minutes}:${seconds.toFixed(0)}`;
+    } else if (!totalPaceSeconds) {
+        // Вычисляем темп
+        const totalPaceInSeconds = totalTimeSeconds / (totalDistanceMeters / 1000);
+        const paceMinutesFinal = Math.floor(totalPaceInSeconds / 60);
+        const paceSecondsFinal = totalPaceInSeconds % 60;
+        resultOutput.innerText = `Темп: ${paceMinutesFinal}:${paceSecondsFinal.toFixed(0)} мин/км`;
+    }
+}
+</script>
+<!-- Библиотека Telegram Web App SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@telegram-widgets/web-app-sdk/dist/telegram-web-app.min.js"></script>
+</body>
+</html>
