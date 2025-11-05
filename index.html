@@ -9,6 +9,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #c5c5c9;
             margin-top: 50px;
         }
         input {
@@ -24,7 +25,7 @@
             cursor: pointer;
         }
         button:hover {
-            background-color: #0056B3;
+            background-color: #7489a0;
         }
         result-output {
             font-size: 1.5em;
@@ -82,7 +83,6 @@ function calculateMissingField() {
     if (!totalDistanceMeters) emptyFieldsCount++;
     if (!totalTimeSeconds) emptyFieldsCount++;
     if (!(paceMinutes || paceSeconds)) emptyFieldsCount++;
-
     if (emptyFieldsCount !== 1) {
         resultOutput.innerText = "Нужно заполнить ровно два поля!";
         return;
